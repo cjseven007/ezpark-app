@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "148285109899-j16c4tk28u04vsbb41ua2db7brdil17q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ezpark",
+            "certificate_hash": "fe129aab2b61d4f3afaaca48ed4de41843b6689c"
+          }
+        },
+        {
           "client_id": "148285109899-9knr5imviqb3c6m43i6h14jrl2kupqkg.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "148285109899-9knr5imviqb3c6m43i6h14jrl2kupqkg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "148285109899-mdkh5tcone1ocarc5gm3len4klfqokah.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ezpark"
+              }
             }
           ]
         }
