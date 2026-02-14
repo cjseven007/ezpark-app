@@ -71,7 +71,9 @@ class SlotLayoutPainter extends CustomPainter {
         s.h * scale,
       );
 
-      fill.color = (s.isAvailable ? Colors.green : Colors.red).withOpacity(0.25);
+      fill.color = (s.isAvailable ? Colors.green : Colors.red).withValues(
+        alpha: 0.1,
+      );
       border.color = s.isAvailable ? Colors.green : Colors.red;
 
       canvas.drawRect(rect, fill);

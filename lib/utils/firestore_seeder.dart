@@ -1,39 +1,33 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 
 class FirestoreSeeder {
-  static final FirebaseFirestore _firestore =
-      FirebaseFirestore.instance;
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   static Future<void> seedDemoParkingArea() async {
-    print("Seeding demo parking area...");
+    debugPrint("Seeding demo parking area...");
 
     final pos = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     );
 
     // Create geo data using geoflutterfire_plus
-    final geo = GeoFirePoint(
-      GeoPoint(pos.latitude, pos.longitude),
-    );
+    final geo = GeoFirePoint(GeoPoint(pos.latitude, pos.longitude));
 
-    final areaRef =
-        await _firestore.collection('parking_areas').add({
+    final areaRef = await _firestore.collection('parking_areas').add({
       "name": "EZPark Demo Lot",
       "geo": geo.data, // contains {geopoint, geohash}
       "capacity": 20,
       "availableCount": 0,
-      "layout": {
-        "imageWidth": 1920,
-        "imageHeight": 1080,
-      }
+      "layout": {"imageWidth": 1920, "imageHeight": 1080},
     });
 
     await _generateSlots(areaRef.id);
 
-    print("Demo data seeded.");
+    debugPrint("Demo data seeded.");
   }
 
   static Future<void> _generateSlots(String areaId) async {
@@ -66,12 +60,7 @@ class FirestoreSeeder {
 
         await slotsRef.add({
           "label": "A$counter",
-          "bbox": {
-            "x": x,
-            "y": y,
-            "w": slotWidth,
-            "h": slotHeight,
-          },
+          "bbox": {"x": x, "y": y, "w": slotWidth, "h": slotHeight},
           "isAvailable": isAvailable,
           "confidence": rand.nextDouble(),
         });
@@ -80,10 +69,7 @@ class FirestoreSeeder {
       }
     }
 
-    await _firestore
-        .collection('parking_areas')
-        .doc(areaId)
-        .update({
+    await _firestore.collection('parking_areas').doc(areaId).update({
       "availableCount": availableCount,
     });
   }

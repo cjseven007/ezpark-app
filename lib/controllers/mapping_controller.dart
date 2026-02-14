@@ -30,10 +30,14 @@ class MappingController extends GetxController {
 
       _sub?.cancel();
       _sub = _areaService
-          .subscribeAreasWithin500m(lat: pos.latitude, lng: pos.longitude)
+          .subscribeAreasWithinRadiusInKm(
+            lat: pos.latitude,
+            lng: pos.longitude,
+            radiusInKm: 1.0,
+          )
           .listen((docs) {
-        areas.value = docs.map((d) => ParkingArea.fromDoc(d)).toList();
-      });
+            areas.value = docs.map((d) => ParkingArea.fromDoc(d)).toList();
+          });
     } finally {
       isLoading.value = false;
     }

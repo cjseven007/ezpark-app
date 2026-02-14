@@ -1,25 +1,31 @@
 name: ezpark
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
   sdk: ^3.10.8
 
 dependencies:
+  # Firebase packages
   firebase_core: ^4.4.0
   firebase_auth: ^6.1.4
   cloud_firestore: ^6.1.2
+  google_sign_in: ^7.2.0
+  # Map and location packages
   flutter_map: ^8.2.2
   latlong2: ^0.9.1
   url_launcher: ^6.3.2
+  geoflutterfire_plus: ^0.0.34
   geocoding: ^4.0.0
-  google_sign_in: ^7.2.0
   geolocator: ^14.0.2
+  flutter_map_location_marker: ^10.2.0
+  # State management and utilities
+  get: ^4.7.3
+  google_nav_bar: ^5.0.7
+  google_fonts: ^8.0.1
   flutter:
     sdk: flutter
-  get: ^4.7.3
-  geoflutterfire_plus: ^0.0.34
 
 dev_dependencies:
   flutter_test:

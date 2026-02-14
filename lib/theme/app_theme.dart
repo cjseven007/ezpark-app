@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Brand Colors
-  static const Color primary = Color(0xFF041E42);   // Navy
+  static const Color primary = Color(0xFF041E42); // Navy
   static const Color secondary = Color(0xFFD3AF37); // Gold
   static const Color background = Colors.white;
   static const Color text = Colors.black;
@@ -16,7 +16,7 @@ class AppTheme {
       surface: background, // 'background' is now 'surface'
       onPrimary: Colors.white,
       onSecondary: Colors.black,
-      onSurface: text,     // 'onBackground' is now 'onSurface'
+      onSurface: text, // 'onBackground' is now 'onSurface'
       brightness: Brightness.light,
     );
 
@@ -43,7 +43,9 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.secondary,
           foregroundColor: colorScheme.onSecondary,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
@@ -52,7 +54,9 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: colorScheme.primary,
           side: BorderSide(color: colorScheme.primary, width: 1.5),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
@@ -81,10 +85,7 @@ class AppTheme {
         ),
       ),
 
-      dividerTheme: DividerThemeData(
-        color: Colors.grey.shade200,
-        thickness: 1,
-      ),
+      dividerTheme: DividerThemeData(color: Colors.grey.shade200, thickness: 1),
 
       iconTheme: IconThemeData(color: colorScheme.primary),
     );

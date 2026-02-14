@@ -10,19 +10,16 @@ class AuthService {
     final googleSignIn = GoogleSignIn.instance;
 
     // Trigger interactive sign-in
-    final GoogleSignInAccount? googleUser =
-        await googleSignIn.authenticate();
+    final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
 
-    if (googleUser == null) {
-      throw Exception('Google sign-in cancelled');
-    }
+    // if (googleUser == null) {
+    //   throw Exception('Google sign-in cancelled');
+    // }
 
     // v7+: ONLY idToken is needed for Firebase
-    final GoogleSignInAuthentication auth =
-        await googleUser.authentication;
+    final GoogleSignInAuthentication auth = googleUser.authentication;
 
-    final OAuthCredential credential =
-        GoogleAuthProvider.credential(
+    final OAuthCredential credential = GoogleAuthProvider.credential(
       idToken: auth.idToken,
     );
 
