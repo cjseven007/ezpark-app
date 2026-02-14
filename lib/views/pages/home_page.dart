@@ -94,9 +94,9 @@ class _HomePageState extends State<HomePage> {
                 userAgentPackageName: 'com.example.ezpark',
                 maxZoom: 19,
               ),
-              MarkerLayer(markers: markers),
               buildCurrentLocationMarker(),
               buildCircleLayer(user!, 1000),
+              MarkerLayer(markers: markers),
             ],
           ),
 
