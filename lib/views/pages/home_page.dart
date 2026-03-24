@@ -1,6 +1,7 @@
 import 'package:ezpark/controllers/landing_page_controller.dart';
 import 'package:ezpark/controllers/mapping_controller.dart';
 import 'package:ezpark/utils/constants.dart';
+import 'package:ezpark/utils/my_colours.dart';
 import 'package:ezpark/views/widgets/parking_marker.dart';
 import 'package:ezpark/views/widgets/slot_layout_sheet.dart';
 import 'package:flutter/material.dart';
@@ -9,16 +10,18 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
+final GlobalKey<HomePageState> homePageKey = GlobalKey<HomePageState>();
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   final mapController = MapController();
-  final searchController = TextEditingController();
+  final MappingController c = Get.put(MappingController());
 
   static const double headerHeight = 380.0;
 
@@ -33,36 +36,26 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
+  void moveToUserLocation() {
+    final user = c.userLocation.value;
+    if (user != null) {
+      _recenterVisually(user, 16);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(MappingController());
-
     return Obx(() {
       if (c.isLoading.value) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      final center =
-          c.currentCenter.value ??
-          c.userLocation.value ??
-          const LatLng(4.2105, 101.9758);
+      final user = c.userLocation.value;
+      final center = user ?? const LatLng(4.2105, 101.9758);
 
       _recenterVisually(center, 16);
 
       final markers = <Marker>[
-        if (c.searchLocation.value != null)
-          Marker(
-            point: c.searchLocation.value!,
-            width: 44,
-            height: 44,
-            child: const Icon(Icons.location_pin, color: Colors.blue, size: 40),
-          ),
         ...c.areas.map((area) {
           final color = area.hasAvailability ? Colors.green : Colors.red;
           return Marker(
@@ -96,10 +89,7 @@ class _HomePageState extends State<HomePage> {
                 maxZoom: 19,
               ),
               buildCurrentLocationMarker(),
-              if (c.userLocation.value != null)
-                buildCircleLayer(c.userLocation.value!, 1000),
-              if (c.searchLocation.value != null)
-                buildCircleLayer(c.searchLocation.value!, 1000),
+              if (user != null) buildCircleLayer(user, 1000),
               MarkerLayer(markers: markers),
             ],
           ),
@@ -142,12 +132,12 @@ class _HomePageState extends State<HomePage> {
                     decoration: InputDecoration(
                       hintText: "Search parking location...",
                       suffixIcon: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black,
+                        decoration: const BoxDecoration(
+                          color: MyColours.primary,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
-                          Icons.search,
+                          Icons.search_rounded,
                           size: 30,
                           color: Colors.white,
                         ),
@@ -171,21 +161,6 @@ class _HomePageState extends State<HomePage> {
                         borderSide: BorderSide.none,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          c.resetToUserLocation();
-                          if (c.userLocation.value != null) {
-                            _recenterVisually(c.userLocation.value!, 16);
-                          }
-                        },
-                        icon: const Icon(Icons.my_location),
-                        label: const Text("My Location"),
-                      ),
-                    ],
                   ),
                 ],
               ),

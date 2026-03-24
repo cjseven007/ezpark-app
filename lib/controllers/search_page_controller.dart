@@ -28,6 +28,7 @@ class SearchPageController extends GetxController {
 
     if (text.trim().isEmpty) {
       hasSearched.value = false;
+      isSearching.value = false;
       results.clear();
       return;
     }
@@ -92,5 +93,12 @@ class SearchPageController extends GetxController {
     _debounce?.cancel();
     _sub?.cancel();
     super.onClose();
+  }
+
+  void resetSearch() {
+    query.value = '';
+    hasSearched.value = false;
+    isSearching.value = false;
+    results.clear();
   }
 }

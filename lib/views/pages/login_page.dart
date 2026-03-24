@@ -1,4 +1,5 @@
 import 'package:ezpark/controllers/auth_controller.dart';
+import 'package:ezpark/utils/my_colours.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,32 +27,15 @@ class LoginPage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Badge
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF041E42).withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.local_parking, color: Color(0xFF041E42)),
-                            SizedBox(width: 8),
-                            Text(
-                              "EZPark",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          'assets/logo/ezpark_logo.png',
+                          width: 120,
                         ),
                       ),
 
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 35),
 
                       const Text(
                         "Sign in to continue",
@@ -73,7 +57,7 @@ class LoginPage extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 22),
+                      const SizedBox(height: 35),
 
                       SizedBox(
                         width: double.infinity,
@@ -90,15 +74,15 @@ class LoginPage extends StatelessWidget {
                                     color: Colors.black,
                                   ),
                                 )
-                              : const Icon(Icons.login),
+                              : const Icon(Icons.login_rounded),
                           label: Text(
                             auth.isLoading.value
                                 ? "Signing in..."
                                 : "Continue with Google",
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFD3AF37),
-                            foregroundColor: Colors.black,
+                            backgroundColor: MyColours.primary,
+                            foregroundColor: MyColours.inverse,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),

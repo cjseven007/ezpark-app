@@ -3,6 +3,7 @@ import 'package:ezpark/models/parking_slot.dart';
 import 'package:ezpark/services/favourite_service.dart';
 import 'package:ezpark/services/slot_service.dart';
 import 'package:ezpark/utils/map_launcher.dart';
+import 'package:ezpark/utils/my_colours.dart';
 import 'package:ezpark/views/widgets/slot_layout_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,7 +19,7 @@ class SlotLayoutSheet extends StatelessWidget {
   String _buildLastUpdatedText() {
     if (area.updatedAt == null) return 'Last updated: Unknown';
     final dt = area.updatedAt!.toDate();
-    return 'Last updated: ${DateFormat('d MMM yyyy, h:mm a').format(dt)}';
+    return 'Updated: ${DateFormat('dd/MMM/yy, h:mm a').format(dt)}';
   }
 
   Future<bool?> _showRemoveConfirmation(BuildContext context) {
@@ -76,9 +77,9 @@ class SlotLayoutSheet extends StatelessWidget {
           final canvasHeight = availableCanvasWidth / contentAspectRatio;
 
           final totalHeight =
-              14 +
-              5 +
-              12 +
+              26 +
+              20 +
+              24 +
               108 +
               8 +
               canvasHeight +
@@ -113,19 +114,50 @@ class SlotLayoutSheet extends StatelessWidget {
                     contentPadding: EdgeInsets.zero,
                     title: Text(
                       area.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                      ),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 4),
-                        Text(
-                          '${area.availableCount}/${area.capacity} available',
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: area.hasAvailability
+                                    ? Colors.green[100]
+                                    : Colors.red[100],
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  width: 1,
+                                  color: area.hasAvailability
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                              ),
+                              child: Text(
+                                '${area.availableCount}/${area.capacity} available',
+                              ),
+                            ),
+                            Text('Parking Fee: ${area.parkingFeeLabel}'),
+                          ],
                         ),
-                        const SizedBox(height: 2),
-                        Text('Parking Fee: ${area.parkingFeeLabel}'),
-                        const SizedBox(height: 2),
-                        Text(_buildLastUpdatedText()),
+                        const SizedBox(height: 4),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            _buildLastUpdatedText(),
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -147,26 +179,6 @@ class SlotLayoutSheet extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            try {
-                              await MapLauncher.openGoogleMapsNavigation(
-                                destination: area.latLng,
-                                label: area.name,
-                              );
-                            } catch (_) {
-                              Get.snackbar(
-                                'Navigation failed',
-                                'Unable to open Google Maps',
-                              );
-                            }
-                          },
-                          icon: const Icon(Icons.navigation),
-                          label: const Text('Navigate'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
                       StreamBuilder<bool>(
                         stream: _favouriteService.isFavourite(area.id),
                         builder: (context, favSnapshot) {
@@ -199,12 +211,33 @@ class SlotLayoutSheet extends StatelessWidget {
                               isFavourite
                                   ? Icons.favorite
                                   : Icons.favorite_border,
+                              color: MyColours.primary,
                             ),
                             tooltip: isFavourite
                                 ? 'Remove favourite'
                                 : 'Add favourite',
                           );
                         },
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            try {
+                              await MapLauncher.openGoogleMapsNavigation(
+                                destination: area.latLng,
+                                label: area.name,
+                              );
+                            } catch (_) {
+                              Get.snackbar(
+                                'Navigation failed',
+                                'Unable to open Google Maps',
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.navigation),
+                          label: const Text('Navigate'),
+                        ),
                       ),
                     ],
                   ),

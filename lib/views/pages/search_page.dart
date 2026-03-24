@@ -1,4 +1,5 @@
 import 'package:ezpark/controllers/search_page_controller.dart';
+import 'package:ezpark/utils/my_colours.dart';
 import 'package:ezpark/views/widgets/parking_marker.dart';
 import 'package:ezpark/views/widgets/slot_layout_sheet.dart';
 import 'package:flutter/material.dart';
@@ -41,45 +42,67 @@ class _SearchPageState extends State<SearchPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: TextField(
-                  controller: textController,
-                  onChanged: controller.onQueryChanged,
-                  decoration: InputDecoration(
-                    hintText: 'Search location name...',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: controller.isSearching.value
-                        ? const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          )
-                        : (textController.text.isNotEmpty
-                              ? IconButton(
-                                  onPressed: () {
-                                    textController.clear();
-                                    controller.onQueryChanged('');
-                                  },
-                                  icon: const Icon(Icons.close),
-                                )
-                              : null),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        'Search Parking',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
+                    SizedBox(height: 10),
+                    TextField(
+                      controller: textController,
+                      onChanged: (value) {
+                        controller.onQueryChanged(value);
+                        setState(() {});
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Search location name...',
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: controller.isSearching.value
+                            ? const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              )
+                            : (controller.query.value.isNotEmpty
+                                  ? IconButton(
+                                      onPressed: () {
+                                        textController.clear();
+                                        controller.resetSearch();
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(Icons.close),
+                                    )
+                                  : null),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Colors.black12),
+                        ),
+                      ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Colors.black12),
-                    ),
-                  ),
+                  ],
                 ),
               ),
               Expanded(
@@ -102,10 +125,26 @@ class _SearchPageState extends State<SearchPage> {
                     }
 
                     if (controller.results.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          'Search for a place to view nearby parking',
-                          style: TextStyle(fontSize: 16),
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.grey[200],
+                              radius: 64,
+                              child: const Icon(
+                                Icons.local_parking_rounded,
+                                size: 64,
+                                color: MyColours.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            const Text(
+                              'Search for a place \nto view nearby parking.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
                         ),
                       );
                     }
@@ -113,7 +152,7 @@ class _SearchPageState extends State<SearchPage> {
                     return ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       itemCount: controller.results.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      separatorBuilder: (_, _) => const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final item = controller.results[index];
                         return ListTile(
@@ -121,7 +160,10 @@ class _SearchPageState extends State<SearchPage> {
                             horizontal: 8,
                             vertical: 4,
                           ),
-                          leading: const Icon(Icons.location_on_outlined),
+                          leading: const Icon(
+                            Icons.location_on_rounded,
+                            color: MyColours.primary,
+                          ),
                           title: Text(item.name),
                           subtitle: Text(
                             item.address,
@@ -181,12 +223,14 @@ class _SearchPageState extends State<SearchPage> {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Row(
                     children: [
-                      IconButton(
-                        onPressed: () {
+                      GestureDetector(
+                        child: const Icon(Icons.arrow_back_ios_rounded),
+                        onTap: () {
                           controller.clearSelectedLocation();
                         },
-                        icon: const Icon(Icons.arrow_back),
                       ),
+                      SizedBox(width: 10),
+
                       Expanded(
                         child: Text(
                           selected.address,
