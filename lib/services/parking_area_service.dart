@@ -20,4 +20,12 @@ class ParkingAreaService {
           (data['geo'] as Map<String, dynamic>)['geopoint'] as GeoPoint,
     );
   }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getAreaById(String areaId) {
+    return _db.collection('parking_areas').doc(areaId).get();
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> streamAreaById(String areaId) {
+    return _db.collection('parking_areas').doc(areaId).snapshots();
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:ezpark/controllers/landing_page_controller.dart';
 import 'package:ezpark/controllers/mapping_controller.dart';
 import 'package:ezpark/utils/constants.dart';
 import 'package:ezpark/views/widgets/parking_marker.dart';
@@ -17,11 +18,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final mapController = MapController();
+  final searchController = TextEditingController();
 
   static const double headerHeight = 380.0;
 
   void _recenterVisually(LatLng center, double zoom) {
-    // shift center UP by half the overlay height (so it appears centered in the visible area)
     final offset = Offset(
       0,
       (MediaQuery.of(context).size.height * 0.8 - headerHeight) / 2,
@@ -33,6 +34,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final c = Get.put(MappingController());
 
@@ -41,23 +48,21 @@ class _HomePageState extends State<HomePage> {
         return const Center(child: CircularProgressIndicator());
       }
 
-      final user = c.userLocation.value;
-      final center = user ?? const LatLng(4.2105, 101.9758);
+      final center =
+          c.currentCenter.value ??
+          c.userLocation.value ??
+          const LatLng(4.2105, 101.9758);
 
       _recenterVisually(center, 16);
 
       final markers = <Marker>[
-        // if (user != null)
-        //   Marker(
-        //     point: user,
-        //     width: 40,
-        //     height: 40,
-        //     child: const Icon(
-        //       Icons.location_on_rounded,
-        //       size: 40,
-        //       color: Colors.blue,
-        //     ),
-        //   ),
+        if (c.searchLocation.value != null)
+          Marker(
+            point: c.searchLocation.value!,
+            width: 44,
+            height: 44,
+            child: const Icon(Icons.location_pin, color: Colors.blue, size: 40),
+          ),
         ...c.areas.map((area) {
           final color = area.hasAvailability ? Colors.green : Colors.red;
           return Marker(
@@ -67,10 +72,7 @@ class _HomePageState extends State<HomePage> {
             child: ParkingMarker(
               color: color,
               onTap: () => Get.bottomSheet(
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.75,
-                  child: SlotLayoutSheet(area: area),
-                ),
+                SlotLayoutSheet(area: area),
                 isScrollControlled: true,
                 backgroundColor: Colors.white,
                 shape: const RoundedRectangleBorder(
@@ -84,7 +86,6 @@ class _HomePageState extends State<HomePage> {
 
       return Stack(
         children: [
-          // 1. The Map (Bottom Layer)
           FlutterMap(
             mapController: mapController,
             options: MapOptions(initialCenter: center, initialZoom: 16),
@@ -95,18 +96,19 @@ class _HomePageState extends State<HomePage> {
                 maxZoom: 19,
               ),
               buildCurrentLocationMarker(),
-              buildCircleLayer(user!, 1000),
+              if (c.userLocation.value != null)
+                buildCircleLayer(c.userLocation.value!, 1000),
+              if (c.searchLocation.value != null)
+                buildCircleLayer(c.searchLocation.value!, 1000),
               MarkerLayer(markers: markers),
             ],
           ),
 
-          // 2. The Gradient & Search Container (Top Layer)
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: Container(
-              // Adjust height to control how far the "fade" goes
               height: headerHeight,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -114,18 +116,13 @@ class _HomePageState extends State<HomePage> {
                   end: Alignment.bottomCenter,
                   stops: const [0.0, 0.6, 1.0],
                   colors: [
-                    Colors.grey[200]!, // Solid-ish top
-                    Colors.grey[100]!, // Fading
-                    Colors.white10, // Fully transparent to show map
+                    Colors.grey[200]!,
+                    Colors.grey[100]!,
+                    Colors.white10,
                   ],
                 ),
               ),
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                60,
-                20,
-                20,
-              ), // Top padding for status bar
+              padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -135,8 +132,13 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 15),
-                  // Your Search Bar
                   TextField(
+                    readOnly: true,
+                    onTap: () {
+                      final landingController =
+                          Get.find<LandingPageController>();
+                      landingController.changeTabIndex(1);
+                    },
                     decoration: InputDecoration(
                       hintText: "Search parking location...",
                       suffixIcon: Container(
@@ -169,6 +171,21 @@ class _HomePageState extends State<HomePage> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          c.resetToUserLocation();
+                          if (c.userLocation.value != null) {
+                            _recenterVisually(c.userLocation.value!, 16);
+                          }
+                        },
+                        icon: const Icon(Icons.my_location),
+                        label: const Text("My Location"),
+                      ),
+                    ],
                   ),
                 ],
               ),

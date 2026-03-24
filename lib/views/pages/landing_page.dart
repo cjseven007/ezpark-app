@@ -2,6 +2,7 @@ import 'package:ezpark/models/nav_item.dart';
 import 'package:ezpark/views/pages/favourites_page.dart';
 import 'package:ezpark/views/pages/home_page.dart';
 import 'package:ezpark/views/pages/profile_page.dart';
+import 'package:ezpark/views/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ezpark/controllers/landing_page_controller.dart';
@@ -13,6 +14,7 @@ class LandingPage extends StatelessWidget {
   final LandingPageController controller = Get.put(LandingPageController());
   final List<NavItem> navItems = [
     NavItem(label: 'Home', icon: Icons.home_outlined, page: const HomePage()),
+    NavItem(label: 'Search', icon: Icons.search, page: const SearchPage()),
     NavItem(
       label: 'Favourites',
       icon: Icons.favorite_border,

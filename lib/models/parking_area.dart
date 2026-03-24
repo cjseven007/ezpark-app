@@ -9,6 +9,8 @@ class ParkingArea {
   final int availableCount;
   final int imageWidth;
   final int imageHeight;
+  final double parkingFee;
+  final Timestamp? updatedAt;
 
   ParkingArea({
     required this.id,
@@ -18,9 +20,17 @@ class ParkingArea {
     required this.availableCount,
     required this.imageWidth,
     required this.imageHeight,
+    required this.parkingFee,
+    required this.updatedAt,
   });
 
   bool get hasAvailability => availableCount > 0;
+  bool get isFree => parkingFee <= 0;
+
+  String get parkingFeeLabel {
+    if (isFree) return 'Free';
+    return 'RM${parkingFee.toStringAsFixed(2)}';
+  }
 
   factory ParkingArea.fromDoc(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -36,6 +46,8 @@ class ParkingArea {
       availableCount: (data['availableCount'] ?? 0) as int,
       imageWidth: (layout['imageWidth'] ?? 1920) as int,
       imageHeight: (layout['imageHeight'] ?? 1080) as int,
+      parkingFee: ((data['parkingFee'] ?? 0) as num).toDouble(),
+      updatedAt: data['updatedAt'] as Timestamp?,
     );
   }
 }
